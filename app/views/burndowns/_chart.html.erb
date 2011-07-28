@@ -1,0 +1,6 @@
+<%= javascript_include_tag 'swfobject', :plugin => 'redmine_burndown' %>
+<h2><%= @version.name %> <%= l(:burndown) %></h2>
+
+<p><%# image_tag @chart.to_s %></p>
+
+<%= @graph %>
