@@ -1,5 +1,4 @@
 require 'redmine'
-require 'gchart' 
 
 require 'open_flash_chart_object'
 require 'open_flash_chart'

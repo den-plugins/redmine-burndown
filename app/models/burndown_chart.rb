@@ -15,22 +15,6 @@ class BurndownChart
     @@max_sprint = sprint_data.max
   end
   
-  def chart
-#    puts dates.inspect
-#    Gchart.line(
-#      :size => '750x400', 
-#      :data => data,
-#      :axis_with_labels => 'x,y',
-#      :axis_labels => [dates.map {|d| d.strftime("%m-%d") }],
-#      :custom => "chxr=1,0,#{sprint_data.max}",
-#      :line_colors => "DDDDDD,FF0000"
-#    )
-  end
-  
-  def data
-#    [ideal_data, sprint_data]
-  end
-  
   def sprint_data
     @sprint_data ||= dates.map do |date|
       issues = all_issues.select {|issue| issue.created_on.to_date <= date }
