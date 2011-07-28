@@ -2,11 +2,14 @@ class BurndownsController < ApplicationController
   unloadable
   menu_item :burndown
 
-  before_filter :find_version_and_project, :authorize, :only => [:show]
+  before_filter :find_version_and_project, :authorize, :only => [:show, :chart]
 
   def show
-    @chart = BurndownChart.new(@version)
-    @graph = open_flash_chart_object('100%',300,"/burndowns/graph_code")
+  
+  end
+
+  def chart
+    render :partial => 'chart'
   end
 
   def graph_code
@@ -76,5 +79,7 @@ private
     @project = Project.find(params[:project_id])
     @version = params[:id] ? @project.versions.find(params[:id]) : @project.current_version
     render_error(l(:burndown_text_no_sprint)) and return unless @version
+    @chart = BurndownChart.new(@version)
+    @graph = open_flash_chart_object('100%',300,"/burndowns/graph_code")
   end
 end
