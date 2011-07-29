@@ -35,7 +35,7 @@ class BurndownsController < ApplicationController
     line_hollow = LineHollow.new
     line_hollow.width = 1
     line_hollow.colour = '#6363AC'
-    line_hollow.dot_size = 5
+    line_hollow.dot_size = (BurndownChart.bd_dates.size >= 100)? 1 : 5
     line_hollow.set_key('Sprint data',10)
     line_hollow.values = data2
 
@@ -48,6 +48,7 @@ class BurndownsController < ApplicationController
     end
 
     x_labels.labels = tmp
+    x_labels.set_range(0,BurndownChart.bd_dates.size,((BurndownChart.bd_dates.size >= 100)? 20 : 1))
 
     x = XAxis.new
     x.set_labels(x_labels)
@@ -67,6 +68,7 @@ class BurndownsController < ApplicationController
     chart.set_y_legend(y_legend)
     chart.x_axis = x # Added this line since the previous tutorial
     chart.y_axis = y
+    chart.set_offset(y)
 
     chart.add_element(line_dot)
     chart.add_element(line_hollow)
