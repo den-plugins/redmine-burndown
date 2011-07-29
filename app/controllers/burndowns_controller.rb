@@ -80,6 +80,6 @@ private
     @version = params[:id] ? @project.versions.find(params[:id]) : @project.current_version
     render_error(l(:burndown_text_no_sprint)) and return unless @version
     @chart = BurndownChart.new(@version)
-    @graph = open_flash_chart_object('100%',300,"/burndowns/graph_code")
+    @graph = open_flash_chart_object('100%','100%',"/burndowns/graph_code")
   end
 end

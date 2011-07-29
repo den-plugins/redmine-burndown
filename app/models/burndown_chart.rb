@@ -38,7 +38,9 @@ class BurndownChart
   end
   
   def ideal_data
-    [sprint_data.first, 0]
+    ideal = [sprint_data.first]
+    ideal[sprint_data.size-1] = 0
+    ideal
   end
   
   def all_issues

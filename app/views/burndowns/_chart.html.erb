@@ -1,6 +1,11 @@
 <div id="chart_content">
 <h2><%= @version.name %> <%= l(:burndown) %></h2>
-
-<%= @graph %>
+<div id="resizable_cont">
+  <%= @graph %>
+  <div id="bottom_pane">
+  <div class="corner" id="DragHandle"> </div>
+  </div>
 </div>
+</div>
+<%= javascript_include_tag 'chart_resize', :plugin => 'redmine_burndown' %>
 
