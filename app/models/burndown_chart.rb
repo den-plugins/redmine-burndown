@@ -1,7 +1,7 @@
 class BurndownChart
   attr_accessor :dates, :version, :start_date
   
-  delegate :to_s, :to => :chart
+  delegate :to_s, :to => :dates
   
   def initialize(version)
     self.version = version
@@ -9,10 +9,10 @@ class BurndownChart
     self.start_date = version.created_on.to_date
     end_date = version.effective_date.to_date
     self.dates = (start_date..end_date).inject([]) { |accum, date| accum << date }
-    @@sprint_data = sprint_data
-    @@ideal_data = ideal_data
-    @@dates = dates.map {|d| d.strftime("%m-%d") }
-    @@max_sprint = sprint_data.max
+#    @@sprint_data = sprint_data
+#    @@ideal_data = ideal_data
+#    @@dates = dates.map {|d| d.strftime("%m-%d-%y") }
+#    @@max_sprint = sprint_data.max
   end
   
   def sprint_data
@@ -47,10 +47,29 @@ class BurndownChart
     version.fixed_issues.find(:all, :include => [{:journals => :details}, :relations_from, :relations_to])
   end
 
-  def self.bd_data
-    [@@ideal_data, @@sprint_data, @@max_sprint]
+  def data_and_dates
+    @data1_and_dates = []
+    @data2_and_dates = []
+    dates.each_with_index do |d, i|
+      @data1_and_dates << ["#{d} 00:00", sprint_data[i]]
+      @data2_and_dates << ["#{d} 00:00", ideal_data[i]]
+    end
+    [@data1_and_dates, @data2_and_dates]
   end
-  def self.bd_dates
-    @@dates
-  end
+
+#  def self.bd_data
+#    [@@ideal_data, @@sprint_data, @@max_sprint]
+#  end
+#  
+#  def self.bd_dates
+#    @@dates
+#  end
+
+#  def chart_cont_width
+#    width = 1000
+#    if @@dates.size >= 50
+#      width = @@dates.size * 5
+#    end
+#  end
+
 end

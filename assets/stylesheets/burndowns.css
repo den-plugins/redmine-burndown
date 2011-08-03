@@ -1,6 +1,5 @@
 #sprint_burndown_list { padding: 0; list-style-type: none; }
 #sprint_burndown_list li.selected { font-weight: bold; }
 #chart_content{ height: 450px; width: 1000px; overflow: auto;}
-#resizable_cont{ height: 300px; width: 1000px; position: relative; }
 #bottom_pane{ height: 10px; background-color: #aaa49a; }
 .corner{ font-weight: bold; height: 10px; width: 10px; background-image: url('./images/resize.gif'); float: right; cursor: se-resize; }
