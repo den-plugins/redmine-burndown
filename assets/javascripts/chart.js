@@ -1,5 +1,5 @@
 function plot_chart(data){
-    
+   // alert("hi");
     var plot1 = jQuery.jqplot ('jchart', data, {
       series:[
             {label:'Sprint'},
@@ -29,5 +29,7 @@ function plot_chart(data){
       } 
     });
     jQuery('.button-reset').click(function() { plot1.resetZoom() });
+
+    //alert(plot1);
 
 }

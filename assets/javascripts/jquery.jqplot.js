@@ -82,6 +82,8 @@
  */
  //j = jQuery.noConflict();
 
+ j = jQuery.noConflict();
+
 (function($) {
     // make sure undefined is undefined
     var undefined;

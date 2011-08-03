@@ -2,37 +2,14 @@
 
 <div id="chart_content">
 <h2><%= @version.name %> Burndown</h2>
-<!--<div id="resizable_cont" style="height: 300px; width: 1000px; position: relative;">
-  <%# @graph %>
-  <div id="bottom_pane">
-  <div class="corner" id="DragHandle"> </div>
-  </div> 
 
-</div> -->
 <div id="jchart">
 
 </div>
 <button class="button-reset">Reset Zoom</button>
 </div> 
 
-<script type="text/javascript">
-  alert("Hello!")
-</script>
 
-<%# javascript_include_tag 'chart_resize', :plugin => 'redmine_burndown' %>
-<%= javascript_include_tag 'jquery.jqplot.js', :plugin => 'redmine_burndown' %>
-<%= javascript_include_tag 'plugins/jqplot.canvasTextRenderer.min.js', :plugin => 'redmine_burndown' %>
-<%= javascript_include_tag 'plugins/jqplot.canvasAxisLabelRenderer.min.js', :plugin => 'redmine_burndown' %>
-<%= javascript_include_tag 'plugins/jqplot.cursor.min.js', :plugin => 'redmine_burndown' %>
-<%= javascript_include_tag 'plugins/jqplot.dateAxisRenderer.min.js', :plugin => 'redmine_burndown' %>
-<%= javascript_include_tag 'plugins/jqplot.highlighter.min.js', :plugin => 'redmine_burndown' %>
-<%= javascript_include_tag 'chart.js', :plugin => 'redmine_burndown' %>
-
-<script type="text/javascript">
-  var nil = null; // to translate nil to null
-  plot_chart(<%= @chart.data_and_dates.inspect %>);
-  alert("Hey!")
-</script>
 
 
 
