@@ -80,7 +80,7 @@
  * See <Change Log>
  * 
  */
- j = jQuery.noConflict();
+ //j = jQuery.noConflict();
 
 (function($) {
     // make sure undefined is undefined

@@ -15,10 +15,11 @@
 <button class="button-reset">Reset Zoom</button>
 </div> 
 
+<script type="text/javascript">
+  alert("Hello!")
+</script>
+
 <%# javascript_include_tag 'chart_resize', :plugin => 'redmine_burndown' %>
-
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
-
 <%= javascript_include_tag 'jquery.jqplot.js', :plugin => 'redmine_burndown' %>
 <%= javascript_include_tag 'plugins/jqplot.canvasTextRenderer.min.js', :plugin => 'redmine_burndown' %>
 <%= javascript_include_tag 'plugins/jqplot.canvasAxisLabelRenderer.min.js', :plugin => 'redmine_burndown' %>
@@ -29,7 +30,8 @@
 
 <script type="text/javascript">
   var nil = null; // to translate nil to null
-  plot_chart(<%= @chart.data_and_dates.inspect %>)
+  plot_chart(<%= @chart.data_and_dates.inspect %>);
+  alert("Hey!")
 </script>
 
 
