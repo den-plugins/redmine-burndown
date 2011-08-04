@@ -57,19 +57,4 @@ class BurndownChart
     [@data1_and_dates, @data2_and_dates]
   end
 
-#  def self.bd_data
-#    [@@ideal_data, @@sprint_data, @@max_sprint]
-#  end
-#  
-#  def self.bd_dates
-#    @@dates
-#  end
-
-#  def chart_cont_width
-#    width = 1000
-#    if @@dates.size >= 50
-#      width = @@dates.size * 5
-#    end
-#  end
-
 end

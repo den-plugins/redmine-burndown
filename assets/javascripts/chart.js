@@ -11,10 +11,14 @@ function plot_chart(data){
         // options for each axis are specified in seperate option objects.
         xaxis: {
           label: "Dates",
-          renderer: jQuery.jqplot.DateAxisRenderer
+          renderer: jQuery.jqplot.DateAxisRenderer,
+          tickOptions: {
+            fontSize: '8pt'
+          }
         },
         yaxis: {
-          label: "Hours"
+          label: "Hours",
+          labelRenderer: jQuery.jqplot.CanvasAxisLabelRenderer
         }
       },
       highlighter: {
