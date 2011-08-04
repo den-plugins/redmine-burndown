@@ -1,5 +1,4 @@
 function plot_chart(data){
-   // alert("hi");
     var plot1 = jQuery.jqplot ('jchart', data, {
       series:[
             {label:'Sprint'},
@@ -12,8 +11,7 @@ function plot_chart(data){
         // options for each axis are specified in seperate option objects.
         xaxis: {
           label: "Dates",
-          renderer: jQuery.jqplot.DateAxisRenderer,
-          
+          renderer: jQuery.jqplot.DateAxisRenderer
         },
         yaxis: {
           label: "Hours"
@@ -29,7 +27,5 @@ function plot_chart(data){
       } 
     });
     jQuery('.button-reset').click(function() { plot1.resetZoom() });
-
-    //alert(plot1);
 
 }

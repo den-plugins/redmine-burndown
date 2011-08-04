@@ -51,8 +51,8 @@ class BurndownChart
     @data1_and_dates = []
     @data2_and_dates = []
     dates.each_with_index do |d, i|
-      @data1_and_dates << ["#{d} 8:00AM", sprint_data[i]]
-      @data2_and_dates << ["#{d} 8:00AM", ideal_data[i]]
+      @data1_and_dates << ["#{d} 6:00AM", sprint_data[i]]
+      @data2_and_dates << ["#{d} 6:00AM", ideal_data[i]]
     end
     [@data1_and_dates, @data2_and_dates]
   end
