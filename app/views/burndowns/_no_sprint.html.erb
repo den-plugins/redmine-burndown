@@ -1,2 +1,6 @@
-<h1>Sprint not started.</h1>
-<!--<p>Click here to start sprint.</p>-->
+<% unless version.nil? %>
+  <h3>Sprint not started.</h3>
+  <p>Click <%= link_to "here", start_sprint_burndown_path(project, version) %> to start sprint.</p>
+<% else %>
+  <h3>No Sprint Started.</h3>
+<% end %>

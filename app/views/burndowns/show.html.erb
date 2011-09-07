@@ -1,20 +1,25 @@
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
+<h2>
+  <%= @version.nil? ? @project.name : @version.name %> Burndown
+</h2>
+<% unless @chart.nil? %>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
 
-<%= render :partial => "chart" %>
+  <%= render :partial => "chart" %>
 
-<%= javascript_include_tag 'jquery.jqplot.js', :plugin => 'redmine_burndown' %>
-<%= javascript_include_tag 'plugins/jqplot.canvasTextRenderer.min.js', :plugin => 'redmine_burndown' %>
-<%= javascript_include_tag 'plugins/jqplot.canvasAxisLabelRenderer.min.js', :plugin => 'redmine_burndown' %>
-<%= javascript_include_tag 'plugins/jqplot.cursor.min.js', :plugin => 'redmine_burndown' %>
-<%= javascript_include_tag 'plugins/jqplot.dateAxisRenderer.min.js', :plugin => 'redmine_burndown' %>
-<%= javascript_include_tag 'plugins/jqplot.highlighter.min.js', :plugin => 'redmine_burndown' %>
-<%= javascript_include_tag 'chart.js', :plugin => 'redmine_burndown' %>
+  <%= javascript_include_tag 'jquery.jqplot.js', :plugin => 'redmine_burndown' %>
+  <%= javascript_include_tag 'plugins/jqplot.canvasTextRenderer.min.js', :plugin => 'redmine_burndown' %>
+  <%= javascript_include_tag 'plugins/jqplot.canvasAxisLabelRenderer.min.js', :plugin => 'redmine_burndown' %>
+  <%= javascript_include_tag 'plugins/jqplot.cursor.min.js', :plugin => 'redmine_burndown' %>
+  <%= javascript_include_tag 'plugins/jqplot.dateAxisRenderer.min.js', :plugin => 'redmine_burndown' %>
+  <%= javascript_include_tag 'plugins/jqplot.highlighter.min.js', :plugin => 'redmine_burndown' %>
+  <%= javascript_include_tag 'chart.js', :plugin => 'redmine_burndown' %>
 
-<script type="text/javascript">
-  var nil = null; // to translate nil to null
-  plot_chart(<%= @chart.data_and_dates.inspect %>);
-  //alert("Hey!")
-</script>
+  <script type="text/javascript">
+    plot_chart(<%= @chart.data_and_dates %>);
+  </script>
+<% else %>
+  <%= render :partial => "no_sprint", :locals => {:project => @project, :version => @version} %>
+<% end %>
 
 <% content_for :sidebar do -%>
   <h3><%= l(:label_version_plural) %></h3>

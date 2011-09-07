@@ -1,8 +1,9 @@
 function plot_chart(data){
     var plot1 = jQuery.jqplot ('jchart', data, {
       series:[
-            {label:'Sprint'},
-            {label:'Ideal'}
+           /* {label: 'Labor Hours', markerOptions: { style:'filledSquare' }}, */
+            {label:'Ideal'},
+            {label:'Sprint', markerOptions: { style:'x' }}
       ],
       legend: {
             show: true
@@ -17,7 +18,7 @@ function plot_chart(data){
           }
         },
         yaxis: {
-          label: "Hours",
+          label: "Hours/Story Points",
           labelRenderer: jQuery.jqplot.CanvasAxisLabelRenderer
         }
       },
