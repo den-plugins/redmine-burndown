@@ -24,7 +24,6 @@ private
     @version = params[:id] ? @project.versions.find(params[:id]) : @project.current_version
 #    render_error("No sprint.") and return unless @version
     if @version and BurndownChart.sprint_has_started(@version.id)
-      puts BurndownChart.sprint_has_started(@version.id)
       @chart = BurndownChart.new(@version)
     else
       @chart = nil

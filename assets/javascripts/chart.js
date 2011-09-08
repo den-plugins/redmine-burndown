@@ -3,7 +3,7 @@ function plot_chart(data){
       series:[
            /* {label: 'Labor Hours', markerOptions: { style:'filledSquare' }}, */
             {label:'Ideal'},
-            {label:'Sprint', markerOptions: { style:'x' }}
+            {label:'Actual', markerOptions: { style:'x' }}
       ],
       legend: {
             show: true
