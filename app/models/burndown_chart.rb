@@ -4,7 +4,7 @@ class BurndownChart
   def initialize(version)
     self.version = version
     self.all_issues = version.fixed_issues.find(:all, :include => [{:journals => :details}, :relations_from, :relations_to])
-    self.start_date = version.sprint_start_date #version.created_on.to_date
+    self.start_date = version.sprint_start_date.to_date #version.created_on.to_date
     end_date = (version.effective_date.nil? or version.effective_date.to_date < start_date)? start_date + 1.month : version.effective_date.to_date
     self.dates = (start_date..end_date).inject([]) { |accum, date| accum << date }
     self.ideal = ideal_data
@@ -13,14 +13,19 @@ class BurndownChart
   
   def sprint_data
     @sprint_data = []
+    puts dates.inspect
     dates.each do |date|
       total_remaining = 0
+      entry_today = nil
       all_issues.each do |issue|
-        issue_today_or_earlier = (issue.created_on.to_date <= date and issue.remaining_effort_entries.map { |a| a.remaining_effort if a.created_on <= date}.last)
-        total_remaining += issue.remaining_effort.to_f if issue_today_or_earlier
+        issue_today_or_earlier = (issue.created_on.to_date <= date)
+        if issue_today_or_earlier
+          entry_today = issue.remaining_effort_entries.select { |a| a.created_on.to_date == date}.last
+          total_remaining += entry_today.nil? ? 0 : entry_today.remaining_effort.to_f
+        end
       end
       unless @sprint_data.empty?
-        @sprint_data << (total_remaining.zero? ? @sprint_data.last : total_remaining)
+        @sprint_data << ((total_remaining.zero? and entry_today.nil?)? @sprint_data.last : total_remaining)
       else
         @sprint_data[0] = (total_remaining.zero? ? ideal.first : total_remaining)
       end
