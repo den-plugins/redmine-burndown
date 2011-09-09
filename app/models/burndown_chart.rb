@@ -16,16 +16,16 @@ class BurndownChart
     puts dates.inspect
     dates.each do |date|
       total_remaining = 0
-      entry_today = nil
+      entry_today_or_earlier = nil
       all_issues.each do |issue|
         issue_today_or_earlier = (issue.created_on.to_date <= date)
         if issue_today_or_earlier
-          entry_today = issue.remaining_effort_entries.select { |a| a.created_on.to_date == date}.last
-          total_remaining += entry_today.nil? ? 0 : entry_today.remaining_effort.to_f
+          entry_today_or_earlier = issue.remaining_effort_entries.select { |a| a.created_on.to_date <= date}.last
+          total_remaining += entry_today_or_earlier.nil? ? 0 : entry_today_or_earlier.remaining_effort.to_f
         end
       end
       unless @sprint_data.empty?
-        @sprint_data << ((total_remaining.zero? and entry_today.nil?)? @sprint_data.last : total_remaining)
+        @sprint_data << ((total_remaining.zero? and entry_today_or_earlier.nil?)? @sprint_data.last : total_remaining)
       else
         @sprint_data[0] = (total_remaining.zero? ? ideal.first : total_remaining)
       end

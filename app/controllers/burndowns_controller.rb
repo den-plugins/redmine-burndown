@@ -5,11 +5,12 @@ class BurndownsController < ApplicationController
   before_filter :find_version_and_project, :authorize, :only => [:show, :chart, :start_sprint]
 
   def show
+    @versions = @project.versions.all(:order => 'effective_date IS NULL, effective_date DESC')
   end
 
   def chart
     unless @chart.nil?
-      render :partial => 'chart'
+      render :partial => 'chart', :locals => {:for_external => true}
     else
       render :partial => "no_sprint", :locals => {:project => @project, :version => @version}
     end
