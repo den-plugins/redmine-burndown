@@ -26,6 +26,6 @@ private
   def find_version_and_project
     @project = Project.find(params[:project_id])
     @version = params[:id] ? @project.versions.find(params[:id]) : @project.current_version
-    @chart = (@version and BurndownChart.sprint_has_started(@version.id))? BurndownChart.new(@version) : nil
+    @chart = (@version and BurndownChart.sprint_has_started(@version.id))? BurndownChart.new(@version, params[:issues]) : nil
   end
 end
