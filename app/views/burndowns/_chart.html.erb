@@ -5,7 +5,9 @@
   <h2><%= @version.name %> Burndown</h2>
   <%= hidden_field_tag 'hidden_chart_data', @chart.data_and_dates %>
 <% end %>
-
+<% if BurndownChart.sprint_has_ended(@version) %>
+  <h3>Chart out of date.</h3>
+<% end %>
 <div style="width:100%; padding: 2px; text-align: right;">
   Click and drag on the plot to zoom. Double click to reset.
 </div>

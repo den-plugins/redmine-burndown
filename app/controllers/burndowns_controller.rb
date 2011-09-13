@@ -5,7 +5,7 @@ class BurndownsController < ApplicationController
   before_filter :find_version_and_project, :authorize, :only => [:show, :chart, :start_sprint]
 
   def show
-    @versions = @project.versions.all(:order => 'effective_date IS NULL, effective_date DESC')
+    @versions = @project.versions.all(:select => 'id, effective_date, name', :order => 'effective_date IS NULL, effective_date DESC')
   end
 
   def chart

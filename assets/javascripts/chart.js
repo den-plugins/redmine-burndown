@@ -2,8 +2,8 @@ function plot_chart(data){
     var plot1 = jQuery.jqplot ('jchart', data, {
       series:[
            /* {label: 'Labor Hours', markerOptions: { style:'filledSquare' }}, */
-            {label:'Ideal'},
-            {label:'Actual', markerOptions: { style:'x' }}
+            {label:'Ideal', markerOptions: { style:'x' }},
+            {label:'Actual'}
       ],
       legend: {
             show: true

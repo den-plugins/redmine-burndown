@@ -1,9 +1,11 @@
 class BurndownChart
   attr_accessor :dates, :version, :start_date, :all_issues, :ideal, :sprint
   
-  def initialize(version)
+  def initialize(version, issues=nil)
     self.version = version
-    self.all_issues = version.fixed_issues.find(:all, :include => [{:journals => :details}, :relations_from, :relations_to])
+#    self.all_issues = (issues.nil? ? version.fixed_issues.find(:all, :include => [{:journals => :details}, :relations_from, :relations_to]) : issues )
+    self.all_issues = version.fixed_issues.find(:all, :include => [{:journals => :details}, :relations_from, :relations_to], 
+                                                   :conditions => (issues.nil? ? nil : ["id IN (#{issues.join(',')}) "]))
     self.start_date = version.sprint_start_date.to_date #version.created_on.to_date
     end_date = (version.effective_date.nil? or version.effective_date.to_date < start_date)? start_date + 1.month : version.effective_date.to_date
     self.dates = (start_date..end_date).inject([]) { |accum, date| accum << date }
@@ -13,19 +15,18 @@ class BurndownChart
   
   def sprint_data
     @sprint_data = []
-    puts dates.inspect
     dates.each do |date|
       total_remaining = 0
-      entry_today_or_earlier = nil
+      entries_today_or_earlier = []
       all_issues.each do |issue|
         issue_today_or_earlier = (issue.created_on.to_date <= date)
         if issue_today_or_earlier
-          entry_today_or_earlier = issue.remaining_effort_entries.select { |a| a.created_on.to_date <= date}.last
-          total_remaining += entry_today_or_earlier.nil? ? 0 : entry_today_or_earlier.remaining_effort.to_f
+          entries_today_or_earlier << issue.remaining_effort_entries.select { |a| a.created_on.to_date <= date}.last
+          total_remaining += entries_today_or_earlier.last.nil? ? 0 : entries_today_or_earlier.last.remaining_effort.to_f
         end
       end
       unless @sprint_data.empty?
-        @sprint_data << ((total_remaining.zero? and entry_today_or_earlier.nil?)? @sprint_data.last : total_remaining)
+        @sprint_data << ((total_remaining.zero? and entries_today_or_earlier.compact.empty?)? @sprint_data.last : total_remaining)
       else
         @sprint_data[0] = (total_remaining.zero? ? ideal.first : total_remaining)
       end
@@ -65,6 +66,15 @@ class BurndownChart
 
   def self.sprint_has_started(id)
     !Version.find_by_id(id).sprint_start_date.nil? and (Version.find_by_id(id).sprint_start_date.to_time || 1.day.from_now) <= Time.now
+  end
+
+  def self.sprint_has_ended(version)
+    effective_date = if version.effective_date.nil? or version.effective_date.to_date < version.sprint_start_date.to_date
+        (version.sprint_start_date.to_date + 1.month)
+      else
+        version.effective_date.to_date
+      end
+    return effective_date <= Time.now.to_date
   end
 
 #  ready to use for labor hours.
