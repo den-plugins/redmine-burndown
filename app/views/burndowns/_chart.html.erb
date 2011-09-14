@@ -5,8 +5,18 @@
   <h2><%= @version.name %> Burndown</h2>
   <%= hidden_field_tag 'hidden_chart_data', @chart.data_and_dates %>
 <% end %>
+<% if @chart.undefined_target_date? %>
+  <h3>Undefined Target Date.</h3>
+  <span>
+    Click <%= link_to_if_authorized "here", { :controller => 'versions', :action => 'edit', :id => @version } %> to set target date.
+  </span>
+<% end %>
 <% if BurndownChart.sprint_has_ended(@version) %>
   <h3>Chart out of date.</h3>
+  <span>
+    <%= link_to_if_authorized "Extend", { :controller => 'versions', :action => 'edit', :id => @version } %>? Or
+    <%= link_to "Restart", start_sprint_burndown_path(@project, @version), :confirm => l(:text_are_you_sure) %>?
+  </span>
 <% end %>
 <div style="width:100%; padding: 2px; text-align: right;">
   Click and drag on the plot to zoom. Double click to reset.

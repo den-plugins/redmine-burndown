@@ -7,7 +7,7 @@ class BurndownChart
     self.all_issues = version.fixed_issues.find(:all, :include => [{:journals => :details}, :relations_from, :relations_to], 
                                                    :conditions => (issues.nil? ? nil : ["id IN (#{issues.join(',')}) "]))
     self.start_date = version.sprint_start_date.to_date #version.created_on.to_date
-    end_date = (version.effective_date.nil? or version.effective_date.to_date < start_date)? start_date + 1.month : version.effective_date.to_date
+    end_date = (undefined_target_date?)? start_date + 1.month : version.effective_date.to_date
     self.dates = (start_date..end_date).inject([]) { |accum, date| accum << date }
     self.ideal = ideal_data
     self.sprint = sprint_data
@@ -28,7 +28,7 @@ class BurndownChart
       unless @sprint_data.empty?
         @sprint_data << ((total_remaining.zero? and entries_today_or_earlier.compact.empty?)? @sprint_data.last : total_remaining)
       else
-        @sprint_data[0] = (total_remaining.zero? ? ideal.first : total_remaining)
+        @sprint_data[0] = ((total_remaining.zero? and entries_today_or_earlier.compact.empty?)? ideal.first : total_remaining)
       end
     end
     @sprint_data
@@ -75,6 +75,10 @@ class BurndownChart
         version.effective_date.to_date
       end
     return effective_date <= Time.now.to_date
+  end
+
+  def undefined_target_date?
+    version.effective_date.nil? or version.effective_date.to_date < start_date
   end
 
 #  ready to use for labor hours.
