@@ -8,7 +8,7 @@
 <% if @chart.undefined_target_date? %>
   <h3>Target Date temporarily set to a month from the sprint's start date.</h3>
   <span>
-    Click <%= link_to_if_authorized "here", { :controller => 'versions', :action => 'edit', :id => @version } %> to set target date.
+    Click <%= link_to_if_authorized "here", { :controller => 'sprints', :action => 'edit', :id => @version } %> to set target date.
   </span>
 <% end %>
 <% if BurndownChart.sprint_has_ended(@version) %>
