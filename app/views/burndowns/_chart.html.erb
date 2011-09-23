@@ -14,7 +14,7 @@
 <% if BurndownChart.sprint_has_ended(@version) %>
   <h3>Chart out of date.</h3>
   <span>
-    <%= link_to_if_authorized "Extend", { :controller => 'versions', :action => 'edit', :id => @version } %>? Or
+    <%= link_to_if_authorized "Extend", { :controller => 'sprints', :action => 'edit', :id => @version } %>? Or
     <%= link_to "Restart", start_sprint_burndown_path(@project, @version), :confirm => l(:text_are_you_sure) %>?
   </span>
 <% end %>

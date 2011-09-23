@@ -5,7 +5,7 @@ class BurndownChart
     self.version = version
 #    self.all_issues = (issues.nil? ? version.fixed_issues.find(:all, :include => [{:journals => :details}, :relations_from, :relations_to]) : issues )
     self.all_issues = version.fixed_issues.find(:all, :include => [{:journals => :details}, :relations_from, :relations_to], 
-                                                   :conditions => (issues.nil? ? nil : ["id IN (#{issues.join(',')}) "]))
+                                                   :conditions => (issues.nil? ? [] : ["id IN (#{issues.join(',')}) "]))
     self.start_date = version.sprint_start_date.to_date #version.created_on.to_date
     end_date = (undefined_target_date?)? start_date + 1.month : version.effective_date.to_date
     self.dates = (start_date..end_date).inject([]) { |accum, date| accum << date }
