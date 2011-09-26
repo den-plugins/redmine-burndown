@@ -4,8 +4,10 @@ class BurndownChart
   def initialize(version, issues=nil)
     self.version = version
 #    self.all_issues = (issues.nil? ? version.fixed_issues.find(:all, :include => [{:journals => :details}, :relations_from, :relations_to]) : issues )
-    self.all_issues = version.fixed_issues.find(:all, :include => [{:journals => :details}, :relations_from, :relations_to], 
-                                                   :conditions => (issues.nil? ? [] : ["id IN (#{issues.join(',')}) "]))
+    query = {:include => [{:journals => :details}, :relations_from, :relations_to]}
+    query[:conditions] = ["id IN (#{issues.join(',')}) "] unless issues.nil?
+    self.all_issues = version.fixed_issues.find(:all, query)           #:include => [{:journals => :details}, :relations_from, :relations_to], 
+#                                                   :conditions => (issues.nil? ? [] : ["id IN (#{issues.join(',')}) "]))
     self.start_date = version.sprint_start_date.to_date #version.created_on.to_date
     end_date = (undefined_target_date?)? start_date + 1.month : version.effective_date.to_date
     self.dates = (start_date..end_date).inject([]) { |accum, date| accum << date }.reject! {|d| d if d.cwday.eql?(6) or d.cwday.eql?(7)}
@@ -38,9 +40,9 @@ class BurndownChart
     issues = all_issues.select {|issue| issue.created_on.to_date <= dates.first }
     total_estimated = 0
     issues.each do |issue|
-      estimated_effort_details = issue.journals.map(&:details).flatten.select {|detail| 'estimated_hours' == detail.prop_key}
-      details_today_or_earlier = estimated_effort_details.select {|a| a.journal.created_on.to_date <= Time.now.to_date }
-      first_estimated_effort = details_today_or_earlier.sort_by {|a| a.journal.created_on }.first
+      journals_today_or_earlier = issue.journals.map {|journal| journal.id if journal.created_on.to_date <= Time.now.to_date}
+      first_estimated_effort = ( journals_today_or_earlier.empty? ? nil : JournalDetail.find(:first, :select => "value", 
+        :conditions => "prop_key = 'estimated_hours' AND old_value is null AND journal_id IN (#{journals_today_or_earlier.join(",")})") )
       total_estimated += first_estimated_effort.value.to_f unless first_estimated_effort.nil?    #issue.estimated_hours.to_f
     end
     @ideal_data = [total_estimated]
