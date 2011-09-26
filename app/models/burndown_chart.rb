@@ -40,10 +40,10 @@ class BurndownChart
     issues = all_issues.select {|issue| issue.created_on.to_date <= dates.first }
     total_estimated = 0
     issues.each do |issue|
-      journals_today_or_earlier = issue.journals.map {|journal| journal.id if journal.created_on.to_date <= Time.now.to_date}
-      first_estimated_effort = ( journals_today_or_earlier.empty? ? nil : JournalDetail.find(:first, :select => "value", 
-        :conditions => "prop_key = 'estimated_hours' AND old_value is null AND journal_id IN (#{journals_today_or_earlier.join(",")})") )
-      total_estimated += first_estimated_effort.value.to_f unless first_estimated_effort.nil?    #issue.estimated_hours.to_f
+#      journals_today_or_earlier = issue.journals.map {|journal| journal.id if journal.created_on.to_date <= Time.now.to_date}
+#      first_estimated_effort = ( journals_today_or_earlier.empty? ? nil : JournalDetail.find(:first, :select => "value", 
+#        :conditions => "prop_key = 'estimated_hours' AND old_value is null AND journal_id IN (#{journals_today_or_earlier.join(",")})") )
+      total_estimated += issue.estimated_hours.to_f #unless first_estimated_effort.nil?    #issue.estimated_hours.to_f
     end
     @ideal_data = [total_estimated]
     days_left = dates.count - 1
