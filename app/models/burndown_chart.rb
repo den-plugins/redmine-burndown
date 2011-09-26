@@ -4,7 +4,7 @@ class BurndownChart
   def initialize(version, issues=nil)
     self.version = version
 #    self.all_issues = (issues.nil? ? version.fixed_issues.find(:all, :include => [{:journals => :details}, :relations_from, :relations_to]) : issues )
-    query = {:include => [{:journals => :details}, :relations_from, :relations_to]}
+    query = {:include => [:relations_from, :relations_to]}
     query[:conditions] = ["id IN (#{issues.join(',')}) "] unless issues.nil?
     self.all_issues = version.fixed_issues.find(:all, query)           #:include => [{:journals => :details}, :relations_from, :relations_to], 
 #                                                   :conditions => (issues.nil? ? [] : ["id IN (#{issues.join(',')}) "]))
