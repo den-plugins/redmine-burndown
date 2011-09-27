@@ -10,7 +10,7 @@ class BurndownChart
 #                                                   :conditions => (issues.nil? ? [] : ["id IN (#{issues.join(',')}) "]))
     self.start_date = version.sprint_start_date.to_date #version.created_on.to_date
     end_date = (undefined_target_date?)? start_date + 1.month : version.effective_date.to_date
-    self.dates = (start_date..end_date).inject([]) { |accum, date| accum << date }.reject! {|d| d if d.cwday.eql?(6) or d.cwday.eql?(7)}
+    self.dates = (start_date..end_date).inject([]) { |accum, date| accum << date }.reject {|d| d if d.cwday.eql?(6) or d.cwday.eql?(7)}
     self.ideal = ideal_data
     self.sprint = sprint_data
   end
