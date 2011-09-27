@@ -4,7 +4,7 @@ class BurndownChart
   def initialize(version, issues=nil)
     self.version = version
 #    self.all_issues = (issues.nil? ? version.fixed_issues.find(:all, :include => [{:journals => :details}, :relations_from, :relations_to]) : issues )
-    query = {:include => [:relations_from, :relations_to]}
+    query = {:include => [:relations_from, :relations_to], :conditions => "issues.tracker_id <> 2"}
     query[:conditions] = ["id IN (#{issues.join(',')}) "] unless issues.nil?
     self.all_issues = version.fixed_issues.find(:all, query)           #:include => [{:journals => :details}, :relations_from, :relations_to], 
 #                                                   :conditions => (issues.nil? ? [] : ["id IN (#{issues.join(',')}) "]))
@@ -17,7 +17,8 @@ class BurndownChart
   
   def sprint_data
     @sprint_data = []
-    dates.each do |date|
+    dates_until_today = dates.reject {|d| d if d > Date.today}
+    dates_until_today.each do |date|
       total_remaining = 0
       entries_today_or_earlier = []
       all_issues.each do |issue|
@@ -40,10 +41,10 @@ class BurndownChart
     issues = all_issues.select {|issue| issue.created_on.to_date <= dates.first }
     total_estimated = 0
     issues.each do |issue|
-#      journals_today_or_earlier = issue.journals.map {|journal| journal.id if journal.created_on.to_date <= Time.now.to_date}
-#      first_estimated_effort = ( journals_today_or_earlier.empty? ? nil : JournalDetail.find(:first, :select => "value", 
-#        :conditions => "prop_key = 'estimated_hours' AND old_value is null AND journal_id IN (#{journals_today_or_earlier.join(",")})") )
-      total_estimated += issue.estimated_hours.to_f #unless first_estimated_effort.nil?    #issue.estimated_hours.to_f
+      estimated_effort_details = issue.journals.map(&:details).flatten.select {|detail| 'estimated_hours' == detail.prop_key and detail.old_value.nil?}
+      details_today_or_earlier = estimated_effort_details.select {|a| a.journal.created_on.to_date <= Time.now.to_date }
+      first_estimated_effort = details_today_or_earlier.sort_by {|a| a.journal.created_on }.first
+      total_estimated += first_estimated_effort.value.to_f unless first_estimated_effort.nil?    #issue.estimated_hours.to_f
     end
     @ideal_data = [total_estimated]
     days_left = dates.count - 1
