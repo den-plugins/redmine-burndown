@@ -2,5 +2,6 @@
 
 <% labelled_tabular_form_for :version, @version, :url => { :action => 'edit' } do |f| %>
 <%= render :partial => 'versions/form', :locals => { :f => f } %>
-<%= submit_tag l(:button_save) %>
+<%= submit_tag l(:button_save) %> 
+<%= link_to "Cancel", url_for(:back), :class => 'icon icon-cancel' %>
 <% end %>

@@ -78,7 +78,7 @@ class BurndownChart
       else
         version.effective_date.to_date
       end
-    return effective_date <= Time.now.to_date
+    return effective_date < Time.now.to_date
   end
 
   def undefined_target_date?
