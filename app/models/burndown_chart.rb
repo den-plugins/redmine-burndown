@@ -1,13 +1,14 @@
 class BurndownChart
   attr_accessor :dates, :version, :start_date, :all_issues, :ideal, :sprint
   
-  def initialize(version, issues=nil)
+  def initialize(version, issue_filter=nil)
     self.version = version
-#    self.all_issues = (issues.nil? ? version.fixed_issues.find(:all, :include => [{:journals => :details}, :relations_from, :relations_to]) : issues )
     query = {:include => [:relations_from, :relations_to], :conditions => "issues.tracker_id <> 2"}
-    query[:conditions] = ["id IN (#{issues.join(',')}) "] unless issues.nil?
-    self.all_issues = version.fixed_issues.find(:all, query)           #:include => [{:journals => :details}, :relations_from, :relations_to], 
-#                                                   :conditions => (issues.nil? ? [] : ["id IN (#{issues.join(',')}) "]))
+    query[:conditions] = ["issues.tracker_id = #{issue_filter["tracker"]}"] unless issue_filter.nil?
+    self.all_issues = version.fixed_issues.find(:all, query) 
+    unless issue_filter.nil?
+      self.all_issues = all_issues.select {|b| not b.custom_values.first(:conditions => "value = '#{issue_filter["team"]}'").nil? } unless issue_filter["team"].empty?
+    end
     self.start_date = version.sprint_start_date.to_date #version.created_on.to_date
     end_date = (undefined_target_date?)? start_date + 1.month : version.effective_date.to_date
     self.dates = (start_date..end_date).inject([]) { |accum, date| accum << date }.reject {|d| d if d.cwday.eql?(6) or d.cwday.eql?(7)}
