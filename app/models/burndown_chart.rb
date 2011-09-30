@@ -1,21 +1,25 @@
 class BurndownChart
   attr_accessor :dates, :version, :start_date, :all_issues, :ideal, :sprint
   
-  def initialize(version, issues=nil)
+  def initialize(version, issue_filter=nil)
     self.version = version
-#    self.all_issues = (issues.nil? ? version.fixed_issues.find(:all, :include => [{:journals => :details}, :relations_from, :relations_to]) : issues )
-    self.all_issues = version.fixed_issues.find(:all, :include => [{:journals => :details}, :relations_from, :relations_to], 
-                                                   :conditions => (issues.nil? ? nil : ["id IN (#{issues.join(',')}) "]))
+    query = {:include => [:relations_from, :relations_to], :conditions => "issues.tracker_id <> 2"}
+    query[:conditions] = ["issues.tracker_id = #{issue_filter["tracker"]}"] unless issue_filter.nil?
+    self.all_issues = version.fixed_issues.find(:all, query) 
+    unless issue_filter.nil?
+      self.all_issues = all_issues.select {|b| not b.custom_values.first(:conditions => "value = '#{issue_filter["team"]}'").nil? } unless issue_filter["team"].empty?
+    end
     self.start_date = version.sprint_start_date.to_date #version.created_on.to_date
     end_date = (undefined_target_date?)? start_date + 1.month : version.effective_date.to_date
-    self.dates = (start_date..end_date).inject([]) { |accum, date| accum << date }
+    self.dates = (start_date..end_date).inject([]) { |accum, date| accum << date }.reject {|d| d if d.cwday.eql?(6) or d.cwday.eql?(7)}
     self.ideal = ideal_data
     self.sprint = sprint_data
   end
   
   def sprint_data
     @sprint_data = []
-    dates.each do |date|
+    dates_until_today = dates.reject {|d| d if d > Date.today}
+    dates_until_today.each do |date|
       total_remaining = 0
       entries_today_or_earlier = []
       all_issues.each do |issue|
@@ -38,7 +42,7 @@ class BurndownChart
     issues = all_issues.select {|issue| issue.created_on.to_date <= dates.first }
     total_estimated = 0
     issues.each do |issue|
-      estimated_effort_details = issue.journals.map(&:details).flatten.select {|detail| 'estimated_hours' == detail.prop_key}
+      estimated_effort_details = issue.journals.map(&:details).flatten.select {|detail| 'estimated_hours' == detail.prop_key and detail.old_value.nil?}
       details_today_or_earlier = estimated_effort_details.select {|a| a.journal.created_on.to_date <= Time.now.to_date }
       first_estimated_effort = details_today_or_earlier.sort_by {|a| a.journal.created_on }.first
       total_estimated += first_estimated_effort.value.to_f unless first_estimated_effort.nil?    #issue.estimated_hours.to_f
@@ -74,7 +78,7 @@ class BurndownChart
       else
         version.effective_date.to_date
       end
-    return effective_date <= Time.now.to_date
+    return effective_date < Time.now.to_date
   end
 
   def undefined_target_date?
