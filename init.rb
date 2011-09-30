@@ -19,4 +19,5 @@ Redmine::Plugin.register :burndown do
   end
 
   menu :project_menu, :burndown, { :controller => 'burndowns', :action => 'show' }, :param => :project_id, :after  => :scrums
+  
 end
