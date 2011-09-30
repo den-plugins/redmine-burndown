@@ -18,5 +18,5 @@ Redmine::Plugin.register :burndown do
     permission :show_burndown, :burndowns => [:show, :chart, :start_sprint], :public => true
   end
 
-  menu :project_menu, :burndown, { :controller => 'burndowns', :action => 'show' }, :param => :project_id, :before  => :activity
+  menu :project_menu, :burndown, { :controller => 'burndowns', :action => 'show' }, :param => :project_id, :after  => :scrums
 end
