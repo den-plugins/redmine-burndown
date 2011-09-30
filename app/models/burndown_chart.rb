@@ -42,7 +42,8 @@ class BurndownChart
     issues = all_issues.select {|issue| issue.created_on.to_date <= dates.first }
     total_estimated = 0
     issues.each do |issue|
-      estimated_effort_details = issue.journals.map(&:details).flatten.select {|detail| 'estimated_hours' == detail.prop_key and detail.old_value.nil?}
+      journals = issue.journals.find(:all, :include => [:user, :details])
+      estimated_effort_details = journals.map(&:details).flatten.select {|detail| 'estimated_hours' == detail.prop_key}
       details_today_or_earlier = estimated_effort_details.select {|a| a.journal.created_on.to_date <= Time.now.to_date }
       first_estimated_effort = details_today_or_earlier.sort_by {|a| a.journal.created_on }.first
       total_estimated += first_estimated_effort.value.to_f unless first_estimated_effort.nil?    #issue.estimated_hours.to_f
