@@ -11,7 +11,8 @@ class BurndownChart
     end
     self.start_date = version.sprint_start_date.to_date #version.created_on.to_date
     end_date = (undefined_target_date?)? start_date + 1.month : version.effective_date.to_date
-    self.dates = (start_date..end_date).inject([]) { |accum, date| accum << date }.reject {|d| d if d.cwday.eql?(6) or d.cwday.eql?(7)}
+    end_date = Date.today if BurndownChart.sprint_has_ended(version)
+    self.dates = get_dates(start_date, end_date)
     self.ideal = ideal_data
     self.sprint = sprint_data
   end
@@ -49,7 +50,9 @@ class BurndownChart
       total_estimated += first_estimated_effort.value.to_f unless first_estimated_effort.nil?    #issue.estimated_hours.to_f
     end
     @ideal_data = [total_estimated]
-    days_left = dates.count - 1
+    end_date = (undefined_target_date?)? start_date + 1.month : version.effective_date.to_date
+    original_dates = get_dates(start_date, end_date)
+    days_left = original_dates.count - 1
     until days_left.zero?
       @ideal_data << (@ideal_data.last - (@ideal_data.last/days_left).to_f)
       days_left -= 1
@@ -67,6 +70,10 @@ class BurndownChart
       @data2_and_dates << ["#{d} 6:00AM", sprint[i]]
     end
     [@data1_and_dates, @data2_and_dates].to_json       #, @data3_and_dates]
+  end
+
+  def get_dates(start_range, end_range)
+    (start_range..end_range).inject([]) { |accum, date| accum << date }.reject {|d| d if d.cwday.eql?(6) or d.cwday.eql?(7)}
   end
 
   def self.sprint_has_started(id)
