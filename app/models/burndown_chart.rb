@@ -11,7 +11,9 @@ class BurndownChart
     end
     self.start_date = version.sprint_start_date.to_date #version.created_on.to_date
     end_date = (undefined_target_date?)? start_date + 1.month : version.effective_date.to_date
-    end_date = Date.today if BurndownChart.sprint_has_ended(version)
+    if BurndownChart.sprint_has_ended(version) or version.completed_on
+      end_date = (version.completed_on ? version.completed_on.to_date : Date.today)
+    end
     self.dates = get_dates(start_date, end_date)
     self.ideal = ideal_data
     self.sprint = sprint_data
@@ -50,9 +52,8 @@ class BurndownChart
       total_estimated += first_estimated_effort.value.to_f unless first_estimated_effort.nil?    #issue.estimated_hours.to_f
     end
     @ideal_data = [total_estimated]
-    end_date = (undefined_target_date?)? start_date + 1.month : version.effective_date.to_date
-    original_dates = get_dates(start_date, end_date)
-    days_left = original_dates.count - 1
+    ideal_dates = get_ideal_dates
+    days_left = ideal_dates.count - 1
     until days_left.zero?
       @ideal_data << (@ideal_data.last - (@ideal_data.last/days_left).to_f)
       days_left -= 1
@@ -60,11 +61,18 @@ class BurndownChart
     @ideal_data
   end
 
+  def get_ideal_dates
+    end_date = (undefined_target_date?)? start_date + 1.month : version.effective_date.to_date
+    return get_dates(start_date, end_date)
+  end
+
   def data_and_dates
     @data1_and_dates = []
     @data2_and_dates = []
 #    @data3_and_dates = []
-    dates.each_with_index do |d, i|
+    ideal_dates = get_ideal_dates
+    final_dates = ((ideal_dates.count > dates.count)? ideal_dates : dates)
+    final_dates.each_with_index do |d, i|
 #      @data1_and_dates << ["#{d} 6:00AM", labor_hours[i]]
       @data1_and_dates << ["#{d} 6:00AM", ideal[i]]
       @data2_and_dates << ["#{d} 6:00AM", sprint[i]]
@@ -95,7 +103,6 @@ class BurndownChart
 
 #  ready to use for labor hours.
 #  def labor_hours
-#    #=IF(G77-(E4*E5)<=0,0,G77-(E4*E5))
 #    resources = version.project.members.count
 #    manhours = 8
 #    period = dates.count - 1
