@@ -42,7 +42,7 @@ class BurndownChart
   end
   
   def ideal_data
-    issues = all_issues.select {|issue| issue.created_on.to_date <= dates.first }
+    issues = (dates.first.nil? ? [] : all_issues.select {|issue| issue.created_on.to_date <= dates.first })
     total_estimated = 0
     issues.each do |issue|
 #      journals = issue.journals.find(:all, :include => [:user, :details])
