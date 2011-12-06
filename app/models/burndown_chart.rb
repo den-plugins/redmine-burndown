@@ -3,7 +3,8 @@ class BurndownChart
   
   def initialize(version, issue_filter=nil)
     self.version = version
-    query = {:include => [:relations_from, :relations_to], :conditions => "issues.tracker_id <> 2"}
+    query = {:include => [:relations_from, :relations_to, :remaining_effort_entries], 
+             :conditions => "issues.tracker_id <> 2"}
     query[:conditions] = ["issues.tracker_id = #{issue_filter["tracker"]}"] unless issue_filter.nil?
     self.all_issues = version.fixed_issues.find(:all, query) 
     unless issue_filter.nil?

@@ -17,8 +17,8 @@ class BurndownsController < ApplicationController
   end
 
   def start_sprint
-    @version.sprint_start_date = Time.now
-    @version.save
+#    @version.sprint_start_date = Time.now
+    @version.update_attributes(:sprint_start_date => Time.now)
     redirect_to show_burndown_path(@project, @version)
   end
 
