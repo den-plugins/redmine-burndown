@@ -29,14 +29,14 @@ class BurndownChart
       all_issues.each do |issue|
         issue_today_or_earlier = (issue.created_on.to_date <= date)
         if issue_today_or_earlier
-          entries_today_or_earlier << issue.remaining_effort_entries.select { |a| a.created_on.to_date <= date && !a.remaining_effort.nil?}.last
+          entries_today_or_earlier << issue.remaining_effort_entries.select { |a| a.created_on.to_date <= date && a.remaining_effort == issue.remaining_effort }.last
           total_remaining += entries_today_or_earlier.last.nil? ? 0 : entries_today_or_earlier.last.remaining_effort.to_f
         end
       end
       unless @sprint_data.empty?
         @sprint_data << ((total_remaining.zero? and entries_today_or_earlier.compact.empty?)? @sprint_data.last : total_remaining)
       else
-        @sprint_data[0] = ((total_remaining.zero? and entries_today_or_earlier.compact.empty?)? ideal.first : total_remaining)
+        @sprint_data[0] = ((total_remaining.zero? and entries_today_or_earlier.compact.empty?)? 0 : total_remaining)
       end
     end
     @sprint_data
