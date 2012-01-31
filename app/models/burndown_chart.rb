@@ -29,7 +29,7 @@ class BurndownChart
       all_issues.each do |issue|
         issue_today_or_earlier = (issue.created_on.to_date <= date)
         if issue_today_or_earlier
-          entries_today_or_earlier << issue.remaining_effort_entries.select { |a| a.created_on.to_date <= date && a.remaining_effort == issue.remaining_effort }.last
+          entries_today_or_earlier << issue.remaining_effort_entries.select { |a| a.created_on.to_date <= date && !a.remaining_effort.nil? }.sort_by(&:created_on).sort_by(&:id).last
           total_remaining += entries_today_or_earlier.last.nil? ? 0 : entries_today_or_earlier.last.remaining_effort.to_f
         end
       end
